@@ -3,6 +3,8 @@ const {
   getToursService,
   getTourByIdService,
   updateTourService,
+  deleteTourByIdService,
+  getTrendingToursService,
 } = require('../services/tour.services');
 
 exports.createTour = async (req, res, next) => {
@@ -96,6 +98,49 @@ exports.updateTour = async (req, res, next) => {
     res.status(400).json({
       status: 'fail',
       message: 'Data update failed',
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteTourById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteTourByIdService(id);
+
+    if (!result.deletedCount) {
+      return res.status(400).json({
+        status: 'fail',
+        error: "Couldn't delete the tour",
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Successfully deleted the tour',
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: "Couldn't delete the tour",
+      error: error.message,
+    });
+  }
+};
+
+exports.getTrendingTours = async (req, res, next) => {
+  try {
+    const tours = await getTrendingToursService();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Successfully got the trending data',
+      data: tours,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: "Couldn't get the trending data",
       error: error.message,
     });
   }

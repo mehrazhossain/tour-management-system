@@ -33,3 +33,13 @@ exports.updateTourService = async (id, data) => {
   );
   return response;
 };
+
+exports.deleteTourByIdService = async (id) => {
+  const result = await Tour.deleteOne({ _id: id });
+  return result;
+};
+
+exports.getTrendingToursService = async () => {
+  const tours = await Tour.find({}).sort({ viewCount: -1 }).limit(3);
+  return tours;
+};
