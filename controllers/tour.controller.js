@@ -1,7 +1,27 @@
 const {
   createTourService,
   getToursService,
+  getTourByIdService,
+  updateTourService,
 } = require('../services/tour.services');
+
+exports.createTour = async (req, res, next) => {
+  try {
+    const result = await createTourService(req.body);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Tour inserted successfully',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Tour is not inserted',
+      error: error.message,
+    });
+  }
+};
 
 exports.getTours = async (req, res, next) => {
   try {
@@ -12,7 +32,6 @@ exports.getTours = async (req, res, next) => {
     excludeFields.forEach((field) => delete filters[field]);
 
     const queries = {};
-    console.log('before queries', queries);
     if (req.query.sort) {
       const sortBy = req.query.sort.split(',').join(' ');
       queries.sortBy = sortBy;
@@ -21,6 +40,7 @@ exports.getTours = async (req, res, next) => {
     if (req.query.fields) {
       const fields = req.query.fields.split(',').join(' ');
       queries.fields = fields;
+      console.log(fields);
     }
 
     if (req.query.page) {
@@ -29,7 +49,6 @@ exports.getTours = async (req, res, next) => {
       queries.skip = skip;
       queries.limit = parseInt(limit);
     }
-    console.log('after queries', queries);
 
     const tours = await getToursService(filters, queries);
 
@@ -46,19 +65,37 @@ exports.getTours = async (req, res, next) => {
   }
 };
 
-exports.createTour = async (req, res, next) => {
+exports.getTourById = async (req, res, next) => {
   try {
-    const result = await createTourService(req.body);
+    const tour = await getTourByIdService(req.params.id);
 
     res.status(200).json({
       status: 'success',
-      message: 'Tour inserted successfully',
-      data: result,
+      message: 'Successfully got the data',
+      data: tour,
     });
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      message: 'Tour is not inserted',
+      message: "Couldn't get the data",
+      error: error.message,
+    });
+  }
+};
+
+exports.updateTour = async (req, res, next) => {
+  try {
+    const response = await updateTourService(req.params.id, req.body);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Data updated successfully',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Data update failed',
       error: error.message,
     });
   }

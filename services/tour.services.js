@@ -1,3 +1,4 @@
+const { updateTourService } = require('../controllers/tour.controller');
 const Tour = require('../models/Tour');
 
 exports.getToursService = async (filters, queries) => {
@@ -16,4 +17,19 @@ exports.getToursService = async (filters, queries) => {
 exports.createTourService = async (data) => {
   const tour = await Tour.create(data);
   return tour;
+};
+
+exports.getTourByIdService = async (id) => {
+  await Tour.updateOne({ _id: id }, { $inc: { viewCount: 1 } });
+  const tour = await Tour.findById(id);
+  return tour;
+};
+
+exports.updateTourService = async (id, data) => {
+  const response = await Tour.updateOne(
+    { _id: id },
+    { $set: data },
+    { runValidators: true }
+  );
+  return response;
 };
