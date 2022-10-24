@@ -43,3 +43,8 @@ exports.getTrendingToursService = async () => {
   const tours = await Tour.find({}).sort({ viewCount: -1 }).limit(3);
   return tours;
 };
+
+exports.getCheapestToursService = async () => {
+  const tours = await Tour.find({}).sort('price').limit(3);
+  return tours;
+};
